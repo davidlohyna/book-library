@@ -1,16 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, redirect, render_template, request, url_for
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField
-from wtforms.validators import DataRequired, URL
+from wtforms import SelectField, StringField, SubmitField
+from wtforms.validators import URL, DataRequired
 
 app = Flask(__name__)
 
 all_books = []
-
-class AddBook(FlaskForm):
-    name = 
-    author =
-    rating =
 
 
 @app.route("/")
