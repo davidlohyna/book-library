@@ -1,10 +1,10 @@
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///new-books-collection.db"
-# Optional: But it will silence the deprecation warning in the console.
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECRET_KEY"] = "123456"
 db = SQLAlchemy(app)
 
 
@@ -23,18 +23,18 @@ class Book(db.Model):
 @app.route("/")
 def home():
     with app.app_context():
-        # --------------------------------Read all records
-
-        # all_books = db.session.execute(
-        #     db.select(Book)
-        # ).scalars()  # scalars will select all that are matched
         ##READ ALL RECORDS
-        # Construct a query to select from the database. Returns the rows in the database
-        all_books = db.session.execute(db.select(Book).order_by(Book.title)).scalars()
-        # Use .scalars() to get the elements rather than entire rows from the database
-        # all_books = result.scalars()
+        # all_books = db.session.execute(db.select(Book).order_by(Book.title)).scalars()
+        return render_template("index.html", books=Book.query.all())
 
-        return render_template("index.html", books=all_books)
+
+@app.route("/delete")
+def delete():
+    book_id = request.args.get("id")
+    book_to_delete = db.get_or_404(Book, book_id)
+    db.session.delete(book_to_delete)
+    db.session.commit()
+    return redirect(url_for("home"))
 
 
 @app.route("/add", methods=["GET", "POST"])
@@ -47,12 +47,7 @@ def add():
         )
         db.session.add(new_book)
         db.session.commit()
-        # new_book = {
-        #     "title": request.form["title"],
-        #     "author": request.form["author"],
-        #     "rating": request.form["rating"],
-        # }
-        # all_books.append(new_book)
+        flash("Record was successfully added")
         return redirect(url_for("home"))
     return render_template("add.html")
 
