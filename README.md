@@ -1,4 +1,3 @@
-# book-library
 # Flask SQL Alchemy Book Collection App
 
 This is a simple Flask web application that allows you to manage a collection of books using a SQLite database with SQLAlchemy.
